@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'colored', '~> 1.2'
   spec.add_runtime_dependency 'faraday'
   spec.add_runtime_dependency 'octokit', '~> 4.2'
+  spec.add_runtime_dependency 'gitlab', '~> 3.6', '>= 3.6.1'
   spec.add_runtime_dependency 'redcarpet', '~> 3.3'
   spec.add_runtime_dependency 'terminal-table', '~> 1'
 
