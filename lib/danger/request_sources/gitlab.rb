@@ -4,7 +4,7 @@ require 'gitlab'
 
 module Danger
   module PRSource
-    class GitLab
+    class GitLab < PR
       attr_accessor :ci_source, :project_id, :pr_json, :issue_json, :environment, :base_commit, :head_commit, :support_tokenless_auth, :ignored_violations, :github_host
 
       def self.validates?
