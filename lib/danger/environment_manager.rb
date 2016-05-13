@@ -55,7 +55,7 @@ module Danger
 
       # OK, so we want to ensure that we have a known head branch, this will always represent
       # the head of the PR ( e.g. the most recent commit that will be merged. )
-      scm.exec "fetch origin +refs/merge_requests/#{pull_id}/merge:#{danger_head_branch}"
+      scm.exec "fetch origin +refs/merge_requests/#{pull_id}/head:#{danger_head_branch}"
     end
 
     def clean_up
