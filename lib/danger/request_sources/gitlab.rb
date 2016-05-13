@@ -43,7 +43,7 @@ module Danger
       end
 
       def ignored_violations_from_pr(pr_json)
-        pr_body = pr_json[:body]
+        pr_body = pr_json.description
         return [] if pr_body.nil?
         pr_body.chomp.scan(/>\s*danger\s*:\s*ignore\s*"(.*)"/i).flatten
       end
