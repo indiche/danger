@@ -29,17 +29,14 @@ module Danger
         next unless c.kind_of?(Class)
         next unless c.validates?(env)
 
-        self.ci_source = c.new(env)
-        if self.ci_source.repo_slug and self.ci_source.pull_request_id
+        self.request_source = c.new(env)
+        if self.request_source
           break
         else
-          puts "Not a Pull Request - skipping `danger` run"
-          self.ci_source = nil
-          return nil
+          # only GitHub for now, open for PRs adding more!
+          self.request_source = GitHub.new(self.ci_source, ENV)
         end
       end
-      # only GitHub for now, open for PRs adding more!
-      self.request_source = GitHub.new(self.ci_source, ENV)
     end
 
     def fill_environment_vars
