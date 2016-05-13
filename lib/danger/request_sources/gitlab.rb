@@ -49,8 +49,8 @@ module Danger
       end
 
       def fetch_issue_details(pr_json)
-        # href = pr_json[:_links][:issue][:href]
-        # self.issue_json = client.get(href)
+        href = pr_json[:_links][:issue][:href]
+        self.issue_json = client.get(href)
       end
 
       def base_commit
@@ -81,7 +81,6 @@ module Danger
         self.pr_json.labels
       end
 
-      # Sending data to GitHub
       def update_pull_request!(warnings: [], errors: [], messages: [], markdowns: [])
         comment_result = {}
 

@@ -3,7 +3,7 @@ require "danger/request_sources/pr_source"
 
 module Danger
   class EnvironmentManager
-    attr_accessor :ci_source, :request_source, :scm
+    attr_accessor :ci_source, :request_source, :scm, :pr_source
 
     def initialize(env)
       CISource.constants.each do |symb|
@@ -28,19 +28,18 @@ module Danger
         c = PRSource.const_get(symb)
         next unless c.kind_of?(Class)
         next unless c.validates?(env)
-
-        self.request_source = c.new(self.ci_source, ENV)
-        if !self.request_source.nil?
-          break
-        else
-          # only GitHub for now, open for PRs adding more!
-          self.request_source = GitHub.new(self.ci_source, ENV)
-        end
+        self.pr_source = c
       end
+
+      unless self.pr_source
+        self.pr_source = GitHub
+      end
+
+      self.request_source = self.pr_source.new(self.ci_source, ENV)
     end
 
     def fill_environment_vars
-      # request_source.fetch_details
+      request_source.fetch_details
 
       self.scm = GitRepo.new # For now
     end
