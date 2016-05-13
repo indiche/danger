@@ -101,7 +101,7 @@ module Danger
         if editable_comments.empty?
           previous_violations = {}
         else
-          comment = editable_comments.first[:body]
+          comment = editable_comments.first.body
           previous_violations = parse_comment(comment)
         end
 
