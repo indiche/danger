@@ -40,7 +40,7 @@ module Danger
     end
 
     def fill_environment_vars
-      request_source.fetch_details
+      # request_source.fetch_details
 
       self.scm = GitRepo.new # For now
     end
