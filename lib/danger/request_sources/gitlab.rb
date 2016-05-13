@@ -8,7 +8,7 @@ module Danger
       attr_accessor :ci_source, :project_id, :pr_json, :issue_json, :environment, :base_commit, :head_commit, :support_tokenless_auth, :ignored_violations, :github_host
 
       def self.validates?
-        !env["GITLAB_CI"].nil?
+        return !env["GITLAB_CI"].nil?
       end
 
       def initialize(ci_source, environment)
@@ -21,7 +21,7 @@ module Danger
         raise "No API endpoint given, please provide one using `GITLAB_API_ENDPOINT`" if !ENV['GITLAB_API_ENDPOINT']
 
         @client || = Gitlab.client(endpoint: ENV['GITLAB_API_ENDPOINT'],
-                                  private_token: ENV['GITLAB_API_PRIVATE_TOKEN'])
+                                   private_token: ENV['GITLAB_API_PRIVATE_TOKEN'])
       end
 
       def markdown_parser
