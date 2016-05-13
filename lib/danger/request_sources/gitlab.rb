@@ -98,12 +98,12 @@ module Danger
           # c.body.include?("generated_by_danger") == false
         end
 
-        if editable_comments.empty?
+        # if editable_comments.empty?
           previous_violations = {}
-        else
-          comment = editable_comments.first.body
-          previous_violations = parse_comment(comment)
-        end
+        # else
+          # comment = editable_comments.first.body
+          # previous_violations = parse_comment(comment)
+        # end
 
         if previous_violations.empty? && (warnings + errors + messages + markdowns).empty?
           # Just remove the comment, if there's nothing to say.
