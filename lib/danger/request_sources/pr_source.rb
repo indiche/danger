@@ -10,6 +10,9 @@ module Danger
       def initialize(_ci_source, _env)
         raise "Subclass and overwrite initialize"
       end
+
+      def fetch_details
+      end
     end
   end
 end
