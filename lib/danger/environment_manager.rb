@@ -47,7 +47,7 @@ module Danger
 
     def ensure_danger_branches_are_setup
       # As this currently just works with GitHub, we can use a github specific feature here:
-      pull_id = ci_source.pull_request_id
+      pull_id = request_source.pr_id
       test_branch = request_source.base_commit
 
       # Next, we want to ensure that we have a version of the current branch at a known location
@@ -55,7 +55,7 @@ module Danger
 
       # OK, so we want to ensure that we have a known head branch, this will always represent
       # the head of the PR ( e.g. the most recent commit that will be merged. )
-      scm.exec "fetch origin +refs/pull/#{pull_id}/merge:#{danger_head_branch}"
+      scm.exec "fetch origin +refs/merge_requests/#{pull_id}/merge:#{danger_head_branch}"
     end
 
     def clean_up

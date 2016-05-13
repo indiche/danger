@@ -36,6 +36,7 @@ module Danger
         end.first
       end
 
+
       def fetch_details
         self.pr_json = client.merge_request(self.project_id, ci_source.pull_request_id)
         puts self.project_id
@@ -66,6 +67,10 @@ module Danger
 
       def branch_for_merge
         raise "Don't know what this does"
+      end
+
+      def pr_id
+        self.pr_json.iid
       end
 
       def pr_title
