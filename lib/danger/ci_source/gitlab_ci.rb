@@ -19,7 +19,7 @@ module Danger
       end
 
       private
-      def gitlab
+      def client
         Gitlab.client(endpoint: ENV['GITLAB_API_ENDPOINT'], 
                       private_token: ENV['GITLAB_API_PRIVATE_TOKEN'])
       end
@@ -33,7 +33,7 @@ module Danger
       end
 
       def fetch_merge_request_id(project_id, ref_name)
-        gitlab.merge_requests(project_id).select do |merge_request|
+        client.merge_requests(project_id).select do |merge_request|
           merge_request.source_branch == ref_name
         end.map do |merge_request|
           merge_request.id
