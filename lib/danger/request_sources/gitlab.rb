@@ -93,7 +93,7 @@ module Danger
         comment_result = {}
 
         comments = client.merge_request_comments(project_id, ci_source.pull_request_id)
-        editable_comments = comments.reject { |issue| issue[:body].include?("generated_by_danger") == false }
+        editable_comments = comments.reject { |c| c.body.include?("generated_by_danger") == false }
 
         if editable_comments.empty?
           previous_violations = {}
