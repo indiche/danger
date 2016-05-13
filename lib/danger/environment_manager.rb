@@ -29,8 +29,8 @@ module Danger
         next unless c.kind_of?(Class)
         next unless c.validates?(env)
 
-        self.request_source = c.new(env)
-        if self.request_source
+        self.request_source = c.new(self.ci_source, ENV)
+        if !self.request_source.nil?
           break
         else
           # only GitHub for now, open for PRs adding more!
