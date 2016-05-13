@@ -20,8 +20,8 @@ module Danger
         raise "No API token given, please provide one using `GITLAB_API_PRIVATE_TOKEN`" if !ENV['GITLAB_API_PRIVATE_TOKEN']
         raise "No API endpoint given, please provide one using `GITLAB_API_ENDPOINT`" if !ENV['GITLAB_API_ENDPOINT']
 
-        @client || = Gitlab.client(endpoint: ENV['GITLAB_API_ENDPOINT'],
-                                   private_token: ENV['GITLAB_API_PRIVATE_TOKEN'])
+        @client ||= Gitlab.client(endpoint: ENV['GITLAB_API_ENDPOINT'],
+                                  private_token: ENV['GITLAB_API_PRIVATE_TOKEN'])
       end
 
       def markdown_parser
