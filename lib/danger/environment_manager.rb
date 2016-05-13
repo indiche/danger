@@ -1,6 +1,5 @@
 uequire "danger/ci_source/ci_source"
 require "danger/request_sources/pr_source"
-require "danger/request_sources/github"
 require "danger/request_sources/gitlab"
 
 module Danger
