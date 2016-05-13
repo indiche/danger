@@ -2,13 +2,14 @@
 
 module Danger
   module PRSource
-  class PR
-   def self.validates?(_env)
-      false
-    end
+    class PR
+      def self.validates?(_env)
+        false
+      end
 
-    def initialize(_ci_source, _env)
-      raise "Subclass and overwrite initialize"
+      def initialize(_ci_source, _env)
+        raise "Subclass and overwrite initialize"
+      end
     end
   end
 end
