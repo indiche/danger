@@ -1,7 +1,6 @@
 require "danger/ci_source/ci_source"
 require "danger/request_sources/pr_source"
 require "danger/request_sources/github"
-require "danger/request_sources/gitlab"
 
 module Danger
   class EnvironmentManager
@@ -34,7 +33,7 @@ module Danger
       end
 
       unless self.pr_source
-        self.pr_source = GitLab
+        self.pr_source = GitHub
       end
 
       self.request_source = self.pr_source.new(self.ci_source, ENV)
