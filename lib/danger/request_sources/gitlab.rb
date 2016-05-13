@@ -115,10 +115,10 @@ module Danger
                                 markdowns: markdowns,
                       previous_violations: previous_violations)
 
-          if editable_issues.empty?
+          if editable_comments.empty?
             comment_result = client.create_merge_request_note(project_id, ci_source.pull_request_id, body)
           else
-            original_id = editable_issues.first.id
+            original_id = editable_comments.first.id
             comment_result = client.update_merge_request_note(project_id, original_id, body)
           end
         end
