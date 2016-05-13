@@ -38,6 +38,9 @@ module Danger
 
       def fetch_details
         self.pr_json = client.merge_request(self.project_id, ci_source.pull_request_id)
+        puts self.project_id
+        puts ci_source.pull_request_id
+        puts self.pr_json
         fetch_issue_details(self.pr_json)
         self.ignored_violations = ignored_violations_from_pr(self.pr_json)
       end
