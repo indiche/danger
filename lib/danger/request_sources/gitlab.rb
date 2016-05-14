@@ -235,6 +235,7 @@ module Danger
       end
 
       def parse_tables_from_comment(comment)
+        return [] if comment.nil?
         comment.split('</table>')
       end
 
