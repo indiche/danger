@@ -93,17 +93,14 @@ module Danger
         comment_result = {}
 
         comments = client.merge_request_comments(project_id, ci_source.pull_request_id)
-        editable_comments = comments.reject do |c| 
-          puts c.body
-          # c.body.include?("generated_by_danger") == false
-        end
+        editable_comments = comments.reject { |c| c.body.include?("generated_by_danger") == false }
 
-        # if editable_comments.empty?
+        if editable_comments.empty?
           previous_violations = {}
-        # else
-          # comment = editable_comments.first.body
-          # previous_violations = parse_comment(comment)
-        # end
+        else
+          comment = editable_comments.first.body
+          previous_violations = parse_comment(comment)
+        end
 
         if previous_violations.empty? && (warnings + errors + messages + markdowns).empty?
           # Just remove the comment, if there's nothing to say.
@@ -115,12 +112,12 @@ module Danger
                                 markdowns: markdowns,
                       previous_violations: previous_violations)
 
-          # if editable_comments.empty?
+          if editable_comments.empty?
             comment_result = client.create_merge_request_note(project_id, ci_source.pull_request_id, body)
-          # else
-            # original_id = editable_comments.first.id
-            # comment_result = client.update_merge_request_note(project_id, original_id, body)
-          # end
+          else
+            original_id = editable_comments.first.id
+            comment_result = client.edit_merge_request_comment(project_id, ci_source.pull_request_id, original_id, body)
+          end
         end
 
         # Now, set the pull request status.
@@ -151,12 +148,12 @@ module Danger
 
       # Get rid of the previously posted comment, to only have the latest one
       def delete_old_comments!(except: nil)
-        # issues = client.issue_comments(ci_source.repo_slug, ci_source.pull_request_id)
-        # issues.each do |issue|
-        #   next unless issue[:body].include?("generated_by_danger")
-        #   next if issue[:id] == except
-        #   client.delete_comment(ci_source.repo_slug, issue[:id])
-        # end
+        comments = client.merge_request_comments(project_id, ci_source.pull_request_id)
+        comments.each do |c|
+          next unless c.body.include?("generated_by_danger")
+          next if c.id == except
+          client.edit_merge_request_comment(project_id, ci_source.pull_request_id, c.id)
+        end
       end
 
       def random_compliment
