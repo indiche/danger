@@ -1,5 +1,5 @@
 require 'danger/ci_source/ci_source'
-require 'danger/request_sources/pr_source'
+require 'danger/request_sources/gitlab'
 
 module Danger
   class EnvironmentManager
@@ -23,13 +23,7 @@ module Danger
 
       raise "Could not find a CI source".red unless self.ci_source
 
-      PRSource.constants.each do |symb|
-        c = PRSource.const_get(symb)
-        next unless c.kind_of?(Class)
-        next unless c.validates?(env)
-
-        self.request_source = c.new(ci_source, env)
-      end
+      self.request_source = Danger::PRSource::GitLab.new(ci_source, env)
     end
 
     def fill_environment_vars
