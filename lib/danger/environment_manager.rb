@@ -38,7 +38,7 @@ module Danger
     end
 
     def fill_environment_vars
-      pr_source.fetch_details
+      request_source.fetch_details
 
       self.scm = GitRepo.new # For now
     end
@@ -57,8 +57,8 @@ module Danger
 
 
       # As this currently just works with GitHub, we can use a github specific feature here:
-      current_branch = pr_source.current_commit
-      test_branch = pr_source.base_commit
+      current_branch = request_source.pr_head_location
+      test_branch = request_source.pr_target_branch
 
       # Next, we want to ensure that we have a version of the current branch at a known location
       scm.exec "branch #{danger_base_branch} #{test_branch}"
