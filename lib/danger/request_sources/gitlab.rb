@@ -24,6 +24,22 @@ module Danger
         "+refs/merge-requests/#{@ci_source.pull_request_id}/head"
       end
 
+      def pr_title
+        merge_request.title
+      end
+
+      def pr_body
+        merge_request.description
+      end
+
+      def pr_author
+        merge_request.author.username
+      end
+
+      def pr_labels
+        merge_request.labels
+      end
+
       def fetch_details
         self.merge_request = client.merge_request(project.id, @ci_source.pull_request_id)
       end
@@ -41,6 +57,7 @@ module Danger
         if previous_violations.empty? and (warnings + errors + messages + markdowns).empty?
           comments.each do |note|
             client.delete_merge_request_note(project.id, merge_request.id, note.id)
+
           end
         else
           body = generate_comment(warnings: warnings,
