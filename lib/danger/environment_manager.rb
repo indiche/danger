@@ -1,10 +1,10 @@
 require "danger/ci_source/ci_source"
 require "danger/request_sources/pr_source"
-require "danger/request_sources/gitlab"
+require 'danger/request_sources/github'
 
 module Danger
   class EnvironmentManager
-    attr_accessor :ci_source, :request_source, :scm, :pr_source
+    attr_accessor :ci_source, :request_source, :scm
 
     def initialize(env)
       CISource.constants.each do |symb|
@@ -24,38 +24,48 @@ module Danger
 
       raise "Could not find a CI source".red unless self.ci_source
 
-
       PRSource.constants.each do |symb|
         c = PRSource.const_get(symb)
         next unless c.kind_of?(Class)
         next unless c.validates?(env)
-        self.pr_source = c
+
+        self.request_source = c.new(ci_source, env)
       end
 
-      unless self.pr_source
-        self.pr_source = GitLab
+      unless self.request_source
+        self.request_source = Danger::GitHub.new(ci_source, env)
       end
-
-      self.request_source = self.pr_source.new(self.ci_source, ENV)
     end
 
     def fill_environment_vars
-      request_source.fetch_details
+      pr_source.fetch_details
 
       self.scm = GitRepo.new # For now
     end
 
     def ensure_danger_branches_are_setup
       # As this currently just works with GitHub, we can use a github specific feature here:
-      pull_id = request_source.pr_id
-      test_branch = request_source.base_commit
+      # pull_id = ci_source.pull_request_id
+      # test_branch = request_source.dsl.base_commit
+
+      # Next, we want to ensure that we have a version of the current branch at a known location
+      # scm.exec "branch #{danger_base_branch} #{test_branch}"
+
+      # OK, so we want to ensure that we have a known head branch, this will always represent
+      # the head of the PR ( e.g. the most recent commit that will be merged. )
+      # scm.exec "fetch origin +refs/pull/#{pull_id}/merge:#{danger_head_branch}"
+
+
+      # As this currently just works with GitHub, we can use a github specific feature here:
+      current_branch = pr_source.current_commit
+      test_branch = pr_source.base_commit
 
       # Next, we want to ensure that we have a version of the current branch at a known location
       scm.exec "branch #{danger_base_branch} #{test_branch}"
 
       # OK, so we want to ensure that we have a known head branch, this will always represent
       # the head of the PR ( e.g. the most recent commit that will be merged. )
-      scm.exec "fetch origin +refs/merge-requests/#{pull_id}/head:#{danger_head_branch}"
+      scm.exec "fetch origin #{current_branch}:#{danger_head_branch}"
     end
 
     def clean_up

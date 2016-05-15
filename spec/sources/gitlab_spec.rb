@@ -1,58 +1,58 @@
-require 'danger/ci_source/gitlab_ci'
+require 'danger/request_sources/gitlab'
 
-describe Danger::CISource::GitlabCI do
-  it 'validates when gitlab env var is found' do
-    env = { "GITLAB_CI" => "true" }
-    expect(Danger::CISource::GitlabCI.validates?(env)).to be true
+describe Danger::PRSource::GitLab do
+  before :each do
+    allow(ENV).to receive(:[]).with('GITLAB_API_ENDPOINT').and_return('http://test.url.com')
+    allow(ENV).to receive(:[]).with('GITLAB_API_PRIVATE_TOKEN').and_return('secret')
+    stub_request(:get, 'http://test.url.com/projects').
+        with(headers: { 'Private-Token' => 'secret' }).
+        to_return(body: fixture('gitlab_projects_response'))
+
+    stub_request(:get, 'http://test.url.com/projects/6/merge_request/1').
+        with(headers: { 'Private-Token' => 'secret' }).
+        to_return(body: fixture('gitlab_merge_request_response'))
+
+    ci_source = double("ci_source", { repo_slug: 'brightbox/puppet', pull_request_id: '1' })
+    @subject = Danger::PRSource::GitLab.new(ci_source, nil)
   end
 
-  it 'doesnt validate when gitlab env var isnt found' do
-    env = { "NOT_GITLAB_CI" => "true" }
-    expect(Danger::CISource::GitlabCI.validates?(env)).to be false
+  it 'validates if "DANGER_REQUEST_SOURCE" ENV variable is GitLab' do
+    env = { "DANGER_REQUEST_SOURCE" => "GitLab" }
+    expect(Danger::PRSource::GitLab.validates?(env)).to be true
   end
 
-  context 'there is merge request' do
-    it 'figures out repo slug and merge request number' do
-      response = fixture("gitlab_merge_requests_response")
-      stub_request(:get, "http://test.url.com/projects/34/merge_requests").
-        with(:headers => {'Accept'=>'application/json', 'Private-Token'=>'secret'}).
-        to_return(:status => 200, :body => response, :headers => {})
+  it 'doesnt validate if "DANGER_REQUEST_SOURCE" ENV variable is not GitLab' do
+    env = { "DANGER_REQUEST_SOURCE" => "NotAGitLab" }
+    expect(Danger::PRSource::GitLab.validates?(env)).to be false
+  end
 
-      allow(ENV).to receive(:[]).with("GITLAB_API_ENDPOINT").and_return("http://test.url.com")
-      allow(ENV).to receive(:[]).with("GITLAB_API_PRIVATE_TOKEN").and_return("secret")
+  describe '.fetch_details' do
+    it 'fetches merge request details' do
+      @subject.fetch_details
 
-      env = {
-        "CI_BUILD_REF_NAME" => "test1",
-        "CI_BUILD_REPO" => "https://gitlab.com/gitlab-org/gitlab-ce.git",
-        "CI_PROJECT_ID" => "34"
-      }
-
-      subject = Danger::CISource::GitlabCI.new(env)
-
-      expect(subject.repo_slug).to eql("gitlab-org/gitlab-ce")
-      expect(subject.pull_request_id).to eql("1")
+      expect(@subject.merge_request).to be_truthy
     end
   end
 
-  context 'there isnt merge request' do
-    it 'leaves merge request number as empty string' do
-      stub_request(:get, "http://test.url.com/projects/34/merge_requests").
-        with(:headers => {'Accept'=>'application/json', 'Private-Token'=>'secret'}).
-        to_return(:status => 200, :body => '[]', :headers => {})
+  describe '.pr_target_branch' do
+    it 'returns target branch of the merge request' do
+      @subject.fetch_details
 
-      allow(ENV).to receive(:[]).with("GITLAB_API_ENDPOINT").and_return("http://test.url.com")
-      allow(ENV).to receive(:[]).with("GITLAB_API_PRIVATE_TOKEN").and_return("secret")
+      expect(@subject.pr_target_branch).to eql('master')
+    end
+  end
 
-      env = {
-        "CI_BUILD_REF_NAME" => "test1",
-        "CI_BUILD_REPO" => "https://gitlab.com/gitlab-org/gitlab-ce.git",
-        "CI_PROJECT_ID" => "34"
-      }
+  describe '.pr_head_location' do
+    it 'returns location of the HEAD of the merge request' do
+      @subject.fetch_details
 
-      subject = Danger::CISource::GitlabCI.new(env)
+      expect(@subject.pr_head_location).to eql('+refs/merge-requests/1/head')
+    end
+  end
 
-      expect(subject.repo_slug).to eql("gitlab-org/gitlab-ce")
-      expect(subject.pull_request_id).to eql("")
+  describe '.update_pull_request!' do
+    it 'creates a new pull request comment' do
+      @subject.update_pull_request!(warnings: [], errors: [], messages: [], markdowns: [])
     end
   end
 end

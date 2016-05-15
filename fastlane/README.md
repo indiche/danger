@@ -1,10 +1,23 @@
-fastlane deployment configuration
+fastlane documentation
 ================
+# Installation
+```
+sudo gem install fastlane
+```
+# Available Actions
+### test
+```
+fastlane test
+```
+Run bundle install and tests
+### release
+```
+fastlane release
+```
+Does everything that's needed for a release, this includes running tests and verifying the GitHub release
 
-This is **not** the [fastlane](https://github.com/KrauseFx/fastlane) source code, but the deployment of `danger` using [fastlane](https://github.com/KrauseFx/fastlane).
+----
 
-For more information:
-
-- [Project Page](https://github.com/KrauseFx/fastlane)
-- [Documentation](https://github.com/KrauseFx/fastlane/tree/master/docs)
-- [fastlane source](https://github.com/KrauseFx/fastlane/tree/master/lib)
+This README.md is auto-generated and will be re-generated every time to run [fastlane](https://fastlane.tools).
+More information about fastlane can be found on [https://fastlane.tools](https://fastlane.tools).
+The documentation of fastlane can be found on [GitHub](https://github.com/fastlane/fastlane/tree/master/fastlane).

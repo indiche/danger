@@ -21,6 +21,37 @@ describe Danger::EnvironmentManager do
     expect(e.ci_source.pull_request_id).to eq(number.to_s)
   end
 
+  it 'stores gitlab in the source' do
+    stub_request(:get, 'http://test.url.com/projects/34/merge_requests').
+        with(headers: { 'Private-Token' => 'secret' }).
+        to_return(body: fixture('gitlab_merge_requests_response'))
+
+    allow(ENV).to receive(:[]).with('GITLAB_API_ENDPOINT').and_return('http://test.url.com')
+    allow(ENV).to receive(:[]).with('GITLAB_API_PRIVATE_TOKEN').and_return('secret')
+
+    env = {
+        "GITLAB_CI" => "true",
+        "CI_BUILD_REF_NAME" => "test1",
+        "CI_BUILD_REPO" => "https://gitlab.com/gitlab-org/gitlab-ce.git",
+        "CI_PROJECT_ID" => "34"
+    }
+
+    e = Danger::EnvironmentManager.new(env)
+    expect(e.ci_source.pull_request_id).to eq('1')
+  end
+
+  it 'sets gitlab as request source' do
+    env = {
+        "HAS_JOSH_K_SEAL_OF_APPROVAL" => "true",
+        "TRAVIS_REPO_SLUG" => "KrauseFx/fastlane",
+        "TRAVIS_PULL_REQUEST" => 123.to_s,
+        "DANGER_REQUEST_SOURCE" => "GitLab"
+    }
+
+    e = Danger::EnvironmentManager.new(env)
+    expect(e.request_source).to be_an_instance_of(Danger::PRSource::GitLab)
+  end
+
   it 'creates a GitHub attr' do
     env = { "HAS_JOSH_K_SEAL_OF_APPROVAL" => "true", "TRAVIS_REPO_SLUG" => "KrauseFx/fastlane", "TRAVIS_PULL_REQUEST" => 123.to_s }
     e = Danger::EnvironmentManager.new(env)

@@ -1,44 +1,22 @@
 module Danger
   module PRSource
     class PR
-      attr_accessor :ci_source, :pr_json, :issue_json, :environment, :base_commit, :head_commit
+      attr_accessor :pr_head_location, :pr_target_branch
 
       def self.validates?(_env)
         false
       end
 
       def initialize(_ci_source, _env)
-        raise "Subclass and overwrite initialize"
-      end
-
-      def client
+        raise 'Subclass and overwrite'
       end
 
       def fetch_details
+        raise 'Subclass and overwrite'
       end
 
-      def fetch_issue_details(_pr_json)
-      end
-
-      def base_commit
-      end
-
-      def head_commit
-      end
-
-      def pr_title
-      end
-
-      def pr_body
-      end
-
-      def pr_author
-      end
-
-      def pr_labels
-      end
-
-      def update_pull_request!(warnings: nil, errors: nil, messages: nil)
+      def update_pull_request!(_warnings: [], _errors: [], _messages: [], _markdowns: [])
+        raise 'Subclass and overwrite'
       end
     end
   end
