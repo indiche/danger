@@ -1,6 +1,5 @@
-require "danger/ci_source/ci_source"
-require "danger/request_sources/pr_source"
-require 'danger/request_sources/github'
+require 'danger/ci_source/ci_source'
+require 'danger/request_sources/pr_source'
 
 module Danger
   class EnvironmentManager
@@ -30,10 +29,6 @@ module Danger
         next unless c.validates?(env)
 
         self.request_source = c.new(ci_source, env)
-      end
-
-      unless self.request_source
-        self.request_source = Danger::GitHub.new(ci_source, env)
       end
     end
 
