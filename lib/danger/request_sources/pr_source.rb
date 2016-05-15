@@ -1,7 +1,7 @@
 module Danger
   module PRSource
     class PR
-      attr_accessor :pr_head_location, :pr_target_branch
+      attr_accessor :pr_head_location, :pr_target_branch, :pr_title, :pr_body, :pr_author, :pr_labels
 
       def self.validates?(_env)
         false

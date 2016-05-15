@@ -1,4 +1,5 @@
 # coding: utf-8
+require 'danger/request_sources/pr_source'
 require 'redcarpet'
 require 'gitlab'
 
