@@ -40,6 +40,11 @@ module Danger
         merge_request.labels
       end
 
+      def ignored_violations_from_pr(pr_json)
+        return [] if pr_body.nil?
+        pr_body.chomp.scan(/>\s*danger\s*:\s*ignore\s*"(.*)"/i).flatten
+      end
+
       def fetch_details
         self.merge_request = client.merge_request(project.id, @ci_source.pull_request_id)
       end
