@@ -17,11 +17,11 @@ module Danger
       end
 
       def pr_target_branch
-        self.merge_request.target_branch
+        merge_request.target_branch
       end
 
       def pr_head_location
-        "+refs/merge-requests/#{@ci_source.pull_request_id}/head"
+        "+refs/merge-requests/#{merge_request.iid}/head"
       end
 
       def pr_title
